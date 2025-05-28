@@ -2,19 +2,30 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>N88BASIC風メモ帳</title>
+  <title>N88BASIC風テキストエディタ</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>N88BASIC風メモ帳</h1>
-  <div id="screen">
-    <pre id="output"></pre>
-    <form id="cli-form" autocomplete="off">
-      <span>&gt; </span>
-      <input id="cli-input" type="text" autofocus autocomplete="off" />
-    </form>
+  <div id="main-container">
+    <header>
+      <h1>N88BASIC風テキストエディタ</h1>
+    </header>
+    <div id="editor-container">
+      <div id="toolbar">
+        <input id="filename" type="text" placeholder="ファイル名" autocomplete="off">
+        <button id="new-btn">新規</button>
+        <button id="save-btn">保存</button>
+        <button id="load-btn">読込</button>
+        <button id="delete-btn">削除</button>
+        <select id="filelist"></select>
+      </div>
+      <textarea id="editor" spellcheck="false" placeholder="ここにテキストを入力してください（日本語対応）"></textarea>
+    </div>
+    <footer>
+      <small>© 2025 N88BASIC風テキストエディタ</small>
+    </footer>
   </div>
   <script src="app.js"></script>
 </body>
