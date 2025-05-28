@@ -1,47 +1,139 @@
-body {
-  background: #002800;
-  color: #00ff00;
-  font-family: 'MS Gothic', 'Consolas', 'monospace';
+:root {
+  --bg-main: #002800;
+  --bg-toolbar: #001800;
+  --border-color: #00ff00;
+  --text-color: #00ff00;
+  --font-main: 'MS Gothic', 'Consolas', 'monospace';
+}
+
+html, body {
   margin: 0;
   padding: 0;
+  background: var(--bg-main);
+  color: var(--text-color);
+  font-family: var(--font-main);
+  height: 100%;
+  min-height: 100vh;
 }
 
-h1 {
+#main-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header, footer {
   text-align: center;
+  padding: 0.5rem 0;
+}
+
+header h1 {
+  margin: 0.5rem 0 0.5rem 0;
   font-size: 1.5rem;
   letter-spacing: 0.1em;
-  margin: 1rem 0 0.5rem 0;
 }
 
-#screen {
-  max-width: 600px;
-  margin: 2rem auto;
-  border: 2px solid #00ff00;
-  padding: 1rem;
-  background: #001800;
-  border-radius: 8px;
-  min-height: 400px;
+footer {
+  font-size: 0.85rem;
+  opacity: 0.7;
 }
 
-pre {
-  min-height: 300px;
-  margin: 0 0 1rem 0;
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-#cli-form {
+#editor-container {
+  flex: 1 1 auto;
+  max-width: 800px;
+  margin: 1.5rem auto;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-toolbar);
   display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+  box-shadow: 0 0 12px #00380088;
+}
+
+#toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  background: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border-color);
   align-items: center;
 }
 
-#cli-input {
+#toolbar input[type="text"] {
   background: transparent;
-  border: none;
-  color: #00ff00;
-  font-family: inherit;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-family: var(--font-main);
+  padding: 0.3rem 0.7rem;
   font-size: 1rem;
+  border-radius: 4px;
+}
+
+#toolbar button {
+  background: #003800;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-main);
+  font-size: 1rem;
+  padding: 0.3rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#toolbar button:hover {
+  background: #005800;
+}
+
+#toolbar select {
+  background: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  font-family: var(--font-main);
+  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+}
+
+#editor {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 300px;
+  background: var(--bg-main);
+  color: var(--text-color);
+  border: none;
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  padding: 1rem;
+  resize: none;
   outline: none;
-  width: 90%;
-  ime-mode: active;
+  line-height: 1.5;
+  border-radius: 0 0 8px 8px;
+  box-sizing: border-box;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 600px) {
+  #editor-container {
+    max-width: 98vw;
+    min-height: 50vh;
+    margin: 0.5rem auto;
+    border-radius: 0;
+  }
+  #toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.3rem;
+    padding: 0.4rem;
+  }
+  #toolbar input, #toolbar button, #toolbar select {
+    font-size: 0.98rem;
+    padding: 0.3rem 0.7rem;
+  }
+  #editor {
+    font-size: 1rem;
+    padding: 0.7rem;
+    min-height: 180px;
+  }
 }
