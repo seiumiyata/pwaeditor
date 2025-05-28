@@ -1,6 +1,6 @@
 {
-  "name": "N88BASIC風メモ帳",
-  "short_name": "N88Memo",
+  "name": "N88BASIC風テキストエディタ",
+  "short_name": "N88BASICエディタ",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#002800",
