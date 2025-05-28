@@ -3,126 +3,115 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
 
-// --- CLIエンジン ---
-const output = document.getElementById('output');
-const form = document.getElementById('cli-form');
-const input = document.getElementById('cli-input');
+// --- ファイル管理用 ---
+const filenameInput = document.getElementById('filename');
+const editor = document.getElementById('editor');
+const filelist = document.getElementById('filelist');
 
-let memory = {}; // メモ帳内容 {ファイル名: 内容}
+const STORAGE_KEY = 'n88basic_files';
 
-function print(msg) {
-  output.textContent += msg + '\n';
-  output.scrollTop = output.scrollHeight;
+// ファイルリスト取得
+function getFiles() {
+  const files = localStorage.getItem(STORAGE_KEY);
+  return files ? JSON.parse(files) : {};
 }
 
-function listFiles() {
-  const files = Object.keys(memory).length ? Object.keys(memory).join('\n') : '（ファイルなし）';
-  print('ファイル一覧:\n' + files);
+// ファイルリスト保存
+function saveFiles(files) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
 }
 
-function saveFile(args) {
-  const [filename, ...contentArr] = args.split(' ');
-  if (!filename) {
-    print('使い方: SAVE ファイル名');
+// ファイルリスト更新
+function updateFileList() {
+  const files = getFiles();
+  filelist.innerHTML = '';
+  Object.keys(files).forEach(fname => {
+    const opt = document.createElement('option');
+    opt.value = fname;
+    opt.textContent = fname;
+    filelist.appendChild(opt);
+  });
+}
+
+// 新規作成
+function newFile() {
+  filenameInput.value = '';
+  editor.value = '';
+  filelist.selectedIndex = -1;
+}
+
+// 保存
+function saveFile() {
+  const fname = filenameInput.value.trim();
+  if (!fname) {
+    alert('ファイル名を入力してください');
+    filenameInput.focus();
     return;
   }
-  const content = prompt('保存する内容を入力してください（日本語可）:', '');
-  if (content !== null) {
-    memory[filename] = content;
-    localStorage.setItem('n88memo', JSON.stringify(memory));
-    print(`"${filename}" を保存しました。`);
-  }
+  const files = getFiles();
+  files[fname] = editor.value;
+  saveFiles(files);
+  updateFileList();
+  alert(`"${fname}" を保存しました`);
 }
 
-function loadFile(args) {
-  const filename = args.trim();
-  if (!filename) {
-    print('使い方: LOAD ファイル名');
+// 読込
+function loadFile() {
+  const fname = filenameInput.value.trim() || filelist.value;
+  if (!fname) {
+    alert('ファイル名を入力するか、リストから選択してください');
     return;
   }
-  if (memory[filename]) {
-    print(`"${filename}" の内容:\n` + memory[filename]);
+  const files = getFiles();
+  if (files[fname] !== undefined) {
+    editor.value = files[fname];
+    filenameInput.value = fname;
+    filelist.value = fname;
   } else {
-    print('ファイルがありません。');
+    alert('ファイルが存在しません');
   }
 }
 
-function deleteFile(args) {
-  const filename = args.trim();
-  if (!filename) {
-    print('使い方: DELETE ファイル名');
+// 削除
+function deleteFile() {
+  const fname = filenameInput.value.trim() || filelist.value;
+  if (!fname) {
+    alert('ファイル名を入力するか、リストから選択してください');
     return;
   }
-  if (memory[filename]) {
-    delete memory[filename];
-    localStorage.setItem('n88memo', JSON.stringify(memory));
-    print(`"${filename}" を削除しました。`);
+  const files = getFiles();
+  if (files[fname] !== undefined) {
+    if (confirm(`"${fname}" を削除しますか？`)) {
+      delete files[fname];
+      saveFiles(files);
+      updateFileList();
+      if (filelist.options.length) {
+        filelist.selectedIndex = 0;
+        filenameInput.value = filelist.value;
+        editor.value = files[filelist.value] || '';
+      } else {
+        newFile();
+      }
+    }
   } else {
-    print('ファイルがありません。');
+    alert('ファイルが存在しません');
   }
 }
 
-function help() {
-  print(
-    'コマンド一覧:\n' +
-    'SAVE ファイル名 ... メモを保存\n' +
-    'LOAD ファイル名 ... メモを表示\n' +
-    'LIST ... ファイル一覧\n' +
-    'DELETE ファイル名 ... ファイル削除\n' +
-    'HELP ... コマンド一覧表示\n' +
-    'CLEAR ... 画面クリア'
-  );
-}
+// ファイルリストから選択時
+filelist.addEventListener('change', () => {
+  filenameInput.value = filelist.value;
+  loadFile();
+});
 
-function clearScreen() {
-  output.textContent = '';
-}
+// ボタンイベント
+document.getElementById('new-btn').onclick = newFile;
+document.getElementById('save-btn').onclick = saveFile;
+document.getElementById('load-btn').onclick = loadFile;
+document.getElementById('delete-btn').onclick = deleteFile;
 
-function handleCommand(cmd) {
-  const [command, ...argsArr] = cmd.trim().split(' ');
-  const args = argsArr.join(' ');
-  switch (command.toUpperCase()) {
-    case 'SAVE':
-      saveFile(args);
-      break;
-    case 'LOAD':
-      loadFile(args);
-      break;
-    case 'LIST':
-      listFiles();
-      break;
-    case 'DELETE':
-      deleteFile(args);
-      break;
-    case 'HELP':
-      help();
-      break;
-    case 'CLEAR':
-      clearScreen();
-      break;
-    case '':
-      // 何もしない
-      break;
-    default:
-      print('不明なコマンドです。HELP で一覧表示');
-  }
-}
-
-// --- ロード時の初期化 ---
+// 初期化
 window.onload = () => {
-  // ローカルストレージから読み込み
-  const data = localStorage.getItem('n88memo');
-  if (data) {
-    memory = JSON.parse(data);
-  }
-  print('N88BASIC風メモ帳へようこそ！\n日本語入力可。HELP でコマンド一覧表示');
-};
-
-// --- コマンド入力イベント ---
-form.onsubmit = (e) => {
-  e.preventDefault();
-  const cmd = input.value;
-  print('> ' + cmd);
-  handleCommand(cmd);
-  input.value = '';
+  updateFileList();
+  newFile();
 };
