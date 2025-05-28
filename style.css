@@ -1,0 +1,47 @@
+body {
+  background: #002800;
+  color: #00ff00;
+  font-family: 'MS Gothic', 'Consolas', 'monospace';
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  margin: 1rem 0 0.5rem 0;
+}
+
+#screen {
+  max-width: 600px;
+  margin: 2rem auto;
+  border: 2px solid #00ff00;
+  padding: 1rem;
+  background: #001800;
+  border-radius: 8px;
+  min-height: 400px;
+}
+
+pre {
+  min-height: 300px;
+  margin: 0 0 1rem 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+#cli-form {
+  display: flex;
+  align-items: center;
+}
+
+#cli-input {
+  background: transparent;
+  border: none;
+  color: #00ff00;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  width: 90%;
+  ime-mode: active;
+}
